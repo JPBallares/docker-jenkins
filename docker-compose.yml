@@ -11,9 +11,12 @@ services:
       - ./var/jenkins_home:/var/jenkins_home
     ports:
       - 2376:2376
+      - 3000:3000
+      - 5000:5000
     env_file:
-      - .env
+      - env/docker.env
     privileged: true
+    command: --storage-driver=overlay2
     restart: unless-stopped
 
   jenkins:
@@ -28,7 +31,7 @@ services:
       - 9000:8080
       - 50000:50000
     env_file:
-      - .env
+      - env/jenkins.env
     restart: unless-stopped
     external_links:
       - jenkins-docker:docker
