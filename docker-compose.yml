@@ -30,6 +30,8 @@ services:
     env_file:
       - .env
     restart: unless-stopped
+    external_links:
+      - jenkins-docker:docker
 
 networks:
   jenkins:
