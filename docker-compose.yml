@@ -11,8 +11,8 @@ services:
       - ./var/jenkins_home:/var/jenkins_home
     ports:
       - 2376:2376
-      - 3000:3000
-      - 5000:5000
+      - 3001:3000
+      - 5001:5000
     env_file:
       - env/docker.env
     privileged: true
