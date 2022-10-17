@@ -1,0 +1,9 @@
+FROM jenkins/ssh-agent:alpine-jdk11
+
+# setup agent environment
+COPY ./scripts/agent_setup.sh /agent_setup.sh
+RUN chmod +x /agent_setup.sh
+RUN sh -c /agent_setup.sh
+
+# cleanup
+RUN rm -f /agent_setup.sh

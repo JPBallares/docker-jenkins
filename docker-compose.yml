@@ -36,6 +36,18 @@ services:
     external_links:
       - jenkins-docker:docker
 
+  jenkins-agent:
+    build:
+      context: ./
+      dockerfile: AgentDockerfile
+    container_name: jenkins-agent
+    networks:
+      - jenkins
+    ports:
+      - 4444:22
+    env_file:
+      - env/agent.env
+
 networks:
   jenkins:
     driver: bridge
