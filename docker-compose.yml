@@ -1,24 +1,6 @@
 version: '3'
 
 services:
-  jenkins-docker:
-    image: docker:dind
-    container_name: jenkins-docker
-    networks:
-      - jenkins
-    volumes:
-      - ./certs/client:/certs/client
-      - ./var/jenkins_home:/var/jenkins_home
-    ports:
-      - 2376:2376
-      - 3001:3000
-      - 5001:5000
-    env_file:
-      - env/docker.env
-    privileged: true
-    command: --storage-driver=overlay2
-    restart: unless-stopped
-
   jenkins:
     build: .
     container_name: jenkins
@@ -33,20 +15,50 @@ services:
     env_file:
       - env/jenkins.env
     restart: unless-stopped
-    external_links:
-      - jenkins-docker:docker
+    # external_links:
+    #   - jenkins-docker:docker
 
-  jenkins-agent:
-    build:
-      context: ./
-      dockerfile: AgentDockerfile
-    container_name: jenkins-agent
+  cockpit-relay:
+    image: alpine/socat
+    container_name: cockpit-relay
     networks:
       - jenkins
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: "tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock"
     ports:
-      - 4444:22
-    env_file:
-      - env/agent.env
+      - 2375:2376
+    restart: unless-stopped
+  # jenkins-docker:
+  #   image: docker:dind
+  #   container_name: jenkins-docker
+  #   networks:
+  #     - jenkins
+  #   volumes:
+  #     - ./certs/client:/certs/client
+  #     - ./var/jenkins_home:/var/jenkins_home
+  #   ports:
+  #     - 2376:2376
+  #     - 3001:3000
+  #     - 5001:5000
+  #   env_file:
+  #     - env/docker.env
+  #   privileged: true
+  #   command: --storage-driver=overlay2
+  #   restart: unless-stopped
+
+
+  # jenkins-agent:
+  #   build:
+  #     context: ./
+  #     dockerfile: AgentDockerfile
+  #   container_name: jenkins-agent
+  #   networks:
+  #     - jenkins
+  #   ports:
+  #     - 4444:22
+  #   env_file:
+  #     - env/agent.env
 
 networks:
   jenkins:
